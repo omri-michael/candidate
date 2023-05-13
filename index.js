@@ -113,7 +113,7 @@ const sendUrlsToStorageApp = (urls) => {
             responseType: 'arraybuffer'
         }).then(response => {
             const fileName = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'))
-            const fileObject = {url: url, fileName: fileName, file: response.data}
+            const fileObject = {url: url, fileName: fileName, file: toBinaryString(response.data)}
             sendToStorageApi(fileObject).then(res => {
                 console.log(res.data.message)
             })
@@ -121,6 +121,11 @@ const sendUrlsToStorageApp = (urls) => {
             console.log('sendUrlsToStorageApp: ', error)
         })
     })
+}
+
+const toBinaryString = (arrayBuffer) => {
+    const view = new Uint8Array(arrayBuffer);
+    return view.reduce((str, byte) => str + byte.toString(2).padStart(8, '0'), '');
 }
 
 const sendToStorageApi = async (data) => {
